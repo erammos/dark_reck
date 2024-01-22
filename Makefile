@@ -26,7 +26,7 @@
 # Define required raylib variables
 PROJECT_NAME       ?= game
 RAYLIB_VERSION     ?= 4.2.0
-RAYLIB_PATH        ?= ..\..
+RAYLIB_PATH        ?= raylib
 
 # Define compiler path on Windows
 COMPILER_PATH      ?= C:/raylib/w64devkit/bin
@@ -115,15 +115,15 @@ ifeq ($(PLATFORM),PLATFORM_RPI)
     RAYLIB_PATH       ?= /home/pi/raylib
 endif
 
-ifeq ($(PLATFORM),PLATFORM_WEB)
+#ifeq ($(PLATFORM),PLATFORM_WEB)
     # Emscripten required variables
-    EMSDK_PATH         ?= C:/emsdk
-    EMSCRIPTEN_PATH    ?= $(EMSDK_PATH)/upstream/emscripten
-    CLANG_PATH          = $(EMSDK_PATH)/upstream/bin
-    PYTHON_PATH         = $(EMSDK_PATH)/python/3.9.2-1_64bit
-    NODE_PATH           = $(EMSDK_PATH)/node/14.18.2_64bit/bin
-    export PATH         = $(EMSDK_PATH);$(EMSCRIPTEN_PATH);$(CLANG_PATH);$(NODE_PATH);$(PYTHON_PATH):$$(PATH)
-endif
+ #   EMSDK_PATH         ?= ${EMSDK}
+  #  EMSCRIPTEN_PATH    ?= $(EMSDK_PATH)/upstream/emscripten
+   # CLANG_PATH          = $(EMSDK_PATH)/upstream/bin
+    #PYTHON_PATH         = $(EMSDK_PATH)/python/3.9.2-1_64bit
+    #NODE_PATH           = $(EMSDK_PATH)/node/14.18.2_64bit/bin
+    #export PATH         = $(EMSDK_PATH);$(EMSCRIPTEN_PATH);$(CLANG_PATH);$(NODE_PATH);$(PYTHON_PATH):$$(PATH)
+#endif
 
 # Define raylib release directory for compiled library.
 # RAYLIB_RELEASE_PATH points to provided binaries or your freshly built version
@@ -172,7 +172,19 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
 endif
 
 # Define default make program: Mingw32-make
-MAKE = mingw32-make
+MAKE ?= make
+
+ifeq ($(PLATFORM),PLATFORM_DESKTOP)
+    ifeq ($(PLATFORM_OS),WINDOWS)
+        MAKE = mingw32-make
+    endif
+endif
+ifeq ($(PLATFORM),PLATFORM_ANDROID)
+    MAKE = mingw32-make
+endif
+ifeq ($(PLATFORM),PLATFORM_WEB)
+    MAKE = emmake make
+endif
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),LINUX)
